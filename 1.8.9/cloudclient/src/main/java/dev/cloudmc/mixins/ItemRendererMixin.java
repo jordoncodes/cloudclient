@@ -79,21 +79,30 @@ public abstract class ItemRendererMixin {
     }
 
     /**
+     * Makes the sword position and rotation to be more accurate to 1.7.10
+     */
+    @Inject(method = "doBlockTransformations", at = @At("HEAD"), cancellable = true)
+    public void swordBlockTransformations(CallbackInfo ci) {
+        if (Cloud.INSTANCE.settingManager.getSettingByModAndName("Animation", "Block Animation").isCheckToggled()) {
+//                                      -0.1F  0.085F
+//            GlStateManager.translate(-0.5F, 0.2F, 0.0F);
+            GlStateManager.translate(-0.24F, 0.17F, 0.0F);
+            GlStateManager.rotate(30.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.translate(0.0F, 0.18F, 0.00F);
+
+            ci.cancel();
+        }
+    }
+
+    /**
      * @author DupliCAT
      * @reason Freelook and Animation mods
      */
     @Overwrite
     public void renderItemInFirstPerson(float partialTicks) {
         boolean animationModToggled = Cloud.INSTANCE.modManager.getMod("Animation").isToggled();
-//        if (animationModToggled && this.mc.thePlayer.getHeldItem() != null) {
-//            if (Cloud.INSTANCE.settingManager.getSettingByModAndName("Animation", "Block Animation").isCheckToggled()) {
-//                this.forceSwingArm();
-//            } else if (Cloud.INSTANCE.settingManager.getSettingByModAndName("Animation", "Eat/Drink Animation").isCheckToggled()) {
-//                this.forceSwingArm();
-//            } else if (Cloud.INSTANCE.settingManager.getSettingByModAndName("Animation", "Bow Animation").isCheckToggled()) {
-//                this.forceSwingArm();
-//            }
-//        }
         float f = 1.0F - (this.prevEquippedProgress + (this.equippedProgress - this.prevEquippedProgress) * partialTicks);
         EntityPlayerSP player = this.mc.thePlayer;
         float f1 = player.getSwingProgress(partialTicks);
@@ -155,30 +164,4 @@ public abstract class ItemRendererMixin {
         RenderHelper.disableStandardItemLighting();
     }
 
-//    /**
-//     * Swings the player's arm if you're holding the attack and use item keys at the same time and looking at a block.
-//     */
-//    private void attemptSwing() {
-//        if (this.mc.thePlayer.getItemInUseCount() > 0) {
-//            final boolean mouseDown = this.mc.gameSettings.keyBindAttack.isKeyDown() &&
-//                    this.mc.gameSettings.keyBindUseItem.isKeyDown();
-//            if (mouseDown && this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-//                forceSwingArm();
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Forces the player to swing their arm.
-//     */
-//    private void forceSwingArm() {
-//        EntityPlayerSP player = this.mc.thePlayer;
-//        int swingEnd = player.isPotionActive(Potion.digSpeed) ?
-//                (6 - (1 + player.getActivePotionEffect(Potion.digSpeed).getAmplifier())) : (player.isPotionActive(Potion.digSlowdown) ?
-//                (6 + (1 + player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2) : 6);
-//        if (!player.isSwingInProgress || player.swingProgressInt >= swingEnd / 2 || player.swingProgressInt < 0) {
-//            player.swingProgressInt = -1;
-//            player.isSwingInProgress = true;
-//        }
-//    }
 }
